@@ -11,9 +11,11 @@ import { useForm } from "react-hook-form";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../../../firebase.config";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const SignUpPage = () => {
   const auth = getAuth(app);
+  const router = useRouter();
 
   const {
     register,
@@ -22,10 +24,24 @@ const SignUpPage = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    const { email, password } = data;
+    const { name, email, password } = data;
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        toast.success("user created successfully");
+      .then((res) => {
+        const userInfo = {
+          name,
+          email,
+          password,
+        };
+        fetch("http://localhost:3000/api/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        }).then((res) => res.json());
+        if (res?.user?.email) {
+          router.push("/");
+        }
       })
       .catch((e) => {
         toast.error(e.message);
@@ -35,6 +51,8 @@ const SignUpPage = () => {
   return (
     <div className="container relative flex flex-col pt-20 justify-center items-center lg:px-0">
       <div className="w-full mx-auto flex flex-col justify-center space-y-6 sm:w-[350px] ">
+        {/* Image And Text One */}
+
         <div className="flex flex-col items-center ">
           <Image
             src="/eagle.png"
@@ -54,8 +72,22 @@ const SignUpPage = () => {
           </Link>
         </div>
 
+        {/* Form */}
+
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                {...register("name", { required: true })}
+                className="mt-2"
+                placeholder="Your Name"
+              />
+              <p className="font text-[12px] mt-2 text-red-600">
+                {errors.name?.message}
+              </p>
+            </div>
+
             <div>
               <Label htmlFor="email">Email</Label>
               <Input

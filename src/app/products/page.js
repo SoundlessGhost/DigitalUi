@@ -5,7 +5,9 @@ const ProductPage = () => {
   return (
     <div>
       <MaxWidthWrapper>
-        <p>kkire ba</p>
+        <p>
+          ALL PRODUCT HERE BCZ THIS IS PRODUCT PAGE OKK BYE I WILL COME NEXT DAY{" "}
+        </p>
       </MaxWidthWrapper>
     </div>
   );

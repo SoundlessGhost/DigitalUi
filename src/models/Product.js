@@ -10,7 +10,15 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    category: {
+    Brand: {
+      type: String,
+      required: true,
+    },
+    Color: {
+      type: String,
+      required: true,
+    },
+    Size: {
       type: String,
       required: true,
     },

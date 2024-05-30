@@ -2,14 +2,17 @@ import ConnectDB from "@/lib/ConnectDB";
 import { Product } from "@/models/Product";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function GET() {
   try {
     await ConnectDB();
     const product = await Product.find();
 
-    return new NextResponse(JSON.stringify(product), { status: 200 });
+    return NextResponse.json(product, { status: 200 });
   } catch (error) {
-    return new NextResponse("Error in fetching product", { status: 500 });
+    return NextResponse.json(
+      { message: "Something Went Wrong Failed to Fetch Product" },
+      { status: 500 }
+    );
   }
 }
 
@@ -18,8 +21,11 @@ export async function POST(request) {
     await ConnectDB();
     const body = await request.json();
     const createProduct = Product.create(body);
-    return new NextResponse(JSON.stringify(createProduct), { status: 200 });
+    return NextResponse.json(createProduct, { status: 200 });
   } catch (error) {
-    return new NextResponse("failed to create product", { status: 500 });
+    return NextResponse.json(
+      { message: "Something Went Wrong Failed to Created Product" },
+      { status: 500 }
+    );
   }
 }

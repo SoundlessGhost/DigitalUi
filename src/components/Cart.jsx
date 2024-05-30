@@ -1,20 +1,20 @@
-import React from "react";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { LuShoppingCart } from "react-icons/lu";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { FaOpencart } from "react-icons/fa6";
 const Cart = () => {
   const itemCount = 0;
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <LuShoppingCart size={20} className="ml-4 cursor-pointer " />
+        <FaOpencart size={20} className="ml-4 cursor-pointer " />
       </SheetTrigger>
       <SheetContent>
         <SheetTitle className="text-sm text-center font">Cart (0)</SheetTitle>

@@ -4,12 +4,16 @@ import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import useUser from "@/hooks/useUser";
 
 const Footer = () => {
   const pathname = usePathname();
+  const [user] = useUser();
   return (
     <footer className="bg-white font flex-grow-0">
-      {pathname == "/sign-in" || pathname == "/sign-up" ? null : (
+      {pathname == "/sign-in" ||
+      pathname == "/sign-up" ||
+      pathname == "/add-product" ? null : (
         <MaxWidthWrapper>
           <div className="border-t border-gray-200">
             <div className="pb-8 pt-16">
@@ -26,16 +30,22 @@ const Footer = () => {
             <div className="relative bg-zinc-100  flex items-center px-6 py-6 sm:py-8 lg:mt-0">
               <div className="text-center relative mx-auto max-w-sm">
                 <h3 className="font-semibold text-gray-900">Become a seller</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <div className="mt-2 text-sm text-muted-foreground">
                   If you'd like to sell high-quality digital products, you can
                   do so in minutes.{" "}
-                  <Link
-                    href="/sign-in?as=seller"
-                    className="whitespace-nowrap font-medium text-black hover:text-zinc-900"
-                  >
-                    Get started &rarr;
-                  </Link>
-                </p>
+                  {user ? (
+                    <span className="whitespace-nowrap font-medium text-black hover:text-zinc-900">
+                      Enjoy Our Site.
+                    </span>
+                  ) : (
+                    <Link
+                      href="/sign-in"
+                      className="whitespace-nowrap font-medium text-black hover:text-zinc-900"
+                    >
+                      Get started &rarr;
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           </div>

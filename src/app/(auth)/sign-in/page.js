@@ -10,9 +10,11 @@ import { useForm } from "react-hook-form";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../../../firebase.config";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const SignInPage = () => {
   const auth = getAuth(app);
+  const router = useRouter();
 
   const {
     register,
@@ -23,21 +25,10 @@ const SignInPage = () => {
   const onSubmit = (data) => {
     const { email, password } = data;
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        const userInfo = {
-          email,
-          password,
-        };
-        fetch("http://localhost:3000/api/users", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userInfo),
-        })
-          .then((res) => res.json())
-          .then((data) => console.log(data));
-        toast.success("user login successfully");
+      .then((res) => {
+        if (res?.user?.email) {
+          router.push("/");
+        }
       })
       .catch((e) => {
         toast.error(e.message);
@@ -47,6 +38,8 @@ const SignInPage = () => {
   return (
     <div className="container relative flex flex-col pt-20 justify-center items-center lg:px-0">
       <div className="w-full mx-auto flex flex-col justify-center space-y-6 sm:w-[350px] ">
+        {/* Image And Text One */}
+
         <div className="flex flex-col items-center ">
           <Image
             src="/eagle.png"
@@ -65,6 +58,8 @@ const SignInPage = () => {
             <ArrowRight className="w-3 ml-0.5" />
           </Link>
         </div>
+
+        {/* Form */}
 
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>

@@ -57,12 +57,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.font {
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
-}
-
-.font1{
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}

@@ -1,6 +1,6 @@
 const getData = async () => {
   try {
-    const res = await fetch("http://localhost:3000/api/posts", {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
       cache: "no-store",
     });
     if (!res.ok) {
@@ -15,10 +15,10 @@ const getData = async () => {
 };
 
 const Posts = async () => {
-  const data = await getData();
+  const posts = await getData();
   return (
     <>
-      {data.map((post) => (
+      {posts.map((post) => (
         <div key={post.id}>
           <h1 className="text-red-500">{post.name}</h1>
         </div>

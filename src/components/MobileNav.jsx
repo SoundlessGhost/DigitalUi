@@ -1,5 +1,5 @@
 import { PRODUCT_CATEGORIES } from "@/config";
-import { Menu, X , LogOutIcon} from "lucide-react";
+import { Menu, X, LogOutIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -19,7 +19,7 @@ const MobileNav = () => {
   const handleLogOut = () => {
     signOut(auth)
       .then(() => {
-        toast.success("user logOut successfully");
+        toast.success("user logout successfully");
       })
       .catch((e) => {
         toast.error(e.message);
@@ -61,6 +61,8 @@ const MobileNav = () => {
       <div className="fixed overflow-y-scroll overscroll-y-none inset-0 z-40 flex">
         <div className="w-4/5">
           <div className="relative flex w-full max-w-sm flex-col overflow-y-auto bg-white pb-12 shadow-xl">
+            {/* Close Button */}
+
             <div className="flex px-4 pb-2 pt-5">
               <button
                 type="button"
@@ -70,6 +72,31 @@ const MobileNav = () => {
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
+
+            {/* User Image */}
+
+            <div className="flex items-center ">
+              {user?.image ? (
+                <Image
+                  width={40}
+                  height={40}
+                  src={user?.image}
+                  alt="User Image"
+                  className="rounded-full"
+                />
+              ) : (
+                <Image
+                  width={40}
+                  height={40}
+                  src={"/user.jpg"}
+                  alt="User Image"
+                  className="rounded-full"
+                />
+              )}
+              <p className="text-[18px] text-red-800"> adasof{user?.name}</p>
+            </div>
+
+            {/* Product fetch  */}
 
             <div className="mt-2">
               <ul>
@@ -113,12 +140,12 @@ const MobileNav = () => {
 
             {user ? (
               <Button
-              onClick={handleLogOut}
-              variant="ghost"
-              className="font -m-2 flex items-center p-2 font-medium text-gray-900"
-            >
-              Log out <LogOutIcon size={15} className="ml-1" />
-            </Button>
+                onClick={handleLogOut}
+                variant="ghost"
+                className="font -m-2 flex items-center p-2 font-medium text-gray-900"
+              >
+                Log out <LogOutIcon size={15} className="ml-1" />
+              </Button>
             ) : (
               <div className=" border-t block border-gray-200 px-4 py-6">
                 <div
@@ -149,6 +176,8 @@ const MobileNav = () => {
                 </div>
               </div>
             )}
+
+            {/* TODO Update Mobile navbar */}
           </div>
         </div>
       </div>

@@ -11,15 +11,26 @@ const AddProductPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
-    const { product, category, price, productImg, productImg1, email } = data;
-    const createdProduct = {
+    const {
+      product,
+      Brand,
+      Color,
+      Size,
+      price,
+      productImg,
+      productImg1,
+      email,
+    } = data;
+
+    const ProductInfo = {
       email,
       product,
-      category,
+      Brand,
+      Color,
+      Size,
       price,
       images: [productImg, productImg1],
     };
@@ -29,14 +40,12 @@ const AddProductPage = () => {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(createdProduct),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
+      body: JSON.stringify(ProductInfo),
+    }).then((res) => res.json());
     toast.success("product successfully created");
   };
   return (
-    <div>
+    <div className="bg-white py-10">
       <MaxWidthWrapper>
         <h1 className="text-center my-2 font text-2xl text-zinc-600">
           &darr; Add Your Product &darr;
@@ -51,9 +60,6 @@ const AddProductPage = () => {
                 className="mt-2"
                 placeholder="your email"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.email?.message}
-              </p>
             </div>
 
             <div>
@@ -63,21 +69,33 @@ const AddProductPage = () => {
                 className="mt-2"
                 placeholder="Product name"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.product?.message}
-              </p>
             </div>
 
             <div className="mt-4">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="Color">Color Family</Label>
               <Input
-                {...register("category", { required: true })}
+                {...register("Color", { required: true })}
                 className="mt-2"
-                placeholder="Category"
+                placeholder="Color"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.category?.message}
-              </p>
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="Brand">Brand</Label>
+              <Input
+                {...register("Brand", { required: true })}
+                className="mt-2"
+                placeholder="Brand"
+              />
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="Size">Size</Label>
+              <Input
+                {...register("Size", { required: true })}
+                className="mt-2"
+                placeholder="Size"
+              />
             </div>
 
             <div className="mt-4">
@@ -87,9 +105,6 @@ const AddProductPage = () => {
                 className="mt-2"
                 placeholder="Price"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.price?.message}
-              </p>
             </div>
 
             <div className="mt-4">
@@ -99,10 +114,8 @@ const AddProductPage = () => {
                 className="mt-2"
                 placeholder="ProductImg"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.productImg?.message}
-              </p>
             </div>
+
             <div className="mt-4">
               <Label htmlFor="productImg1">ProductImg 1</Label>
               <Input
@@ -110,9 +123,6 @@ const AddProductPage = () => {
                 className="mt-2"
                 placeholder="ProductImg"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.productImg1?.message}
-              </p>
             </div>
             <Button className="w-full mt-6 font">Continue to add</Button>
           </form>
