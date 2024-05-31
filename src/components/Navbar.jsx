@@ -7,7 +7,6 @@ import Cart from "./Cart";
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
 import useUser from "@/hooks/useUser";
-import { Plus } from "lucide-react";
 import { DropdownMenuDemo } from "./DropdownMenuDemo";
 
 const Navbar = () => {
@@ -45,7 +44,7 @@ const Navbar = () => {
                     className=" py-3 px-4 hover:bg-gray-100  font-semibold border-0 border-r border-gray-300 text-sm font"
                     href="/sign-in"
                   >
-                    Sign In
+                    Log In
                   </Link>
                 </div>
 

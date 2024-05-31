@@ -20,6 +20,7 @@ export async function POST(request) {
   try {
     await ConnectDB();
     const body = await request.json();
+    
     const createProduct = Product.create(body);
     return NextResponse.json(createProduct, { status: 200 });
   } catch (error) {

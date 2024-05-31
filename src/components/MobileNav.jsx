@@ -1,30 +1,70 @@
 import { PRODUCT_CATEGORIES } from "@/config";
-import { Menu, X, LogOutIcon } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  Settings,
+  CreditCard,
+  UserPlus,
+  Plus,
+  LogOut,
+  LogIn,
+  UserRoundPlus,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import useUser from "@/hooks/useUser";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button, buttonVariants } from "./ui/button";
 import { getAuth, signOut } from "@firebase/auth";
 import { app } from "../../firebase.config";
 
+const getUser = async () => {
+  try {
+    const res = await fetch("http://localhost:3000/api/users", {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      throw new Error("Fetching error: " + res.statusText);
+    }
+    const FetchValue = await res.json();
+    return FetchValue;
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    return [];
+  }
+};
+
 const MobileNav = () => {
+  const [currentUsers, setCurrentUsers] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const auth = getAuth(app);
   const [user] = useUser();
+  const router = useRouter();
 
-  const handleLogOut = () => {
-    signOut(auth)
-      .then(() => {
-        toast.success("user logout successfully");
-      })
-      .catch((e) => {
-        toast.error(e.message);
-      });
-  };
+  // Filter user from database
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const FetchValue = await getUser();
+
+      // Ensure FetchValue is iterable (an array in this case)
+      if (Array.isArray(FetchValue)) {
+        const filteredUser = FetchValue.filter(
+          (FetchUser) => FetchUser?.email === user?.email
+        );
+        setCurrentUsers(filteredUser);
+      } else {
+        console.error("FetchValue is not an array or iterable", FetchValue);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  // Window Close Or Open
 
   useEffect(() => {
     setIsOpen(false);
@@ -46,19 +86,32 @@ const MobileNav = () => {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="lg:hidden relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+        className="lg:hidden relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-450"
       >
         <Menu className="h-6 w-6" aria-hidden="true" />
       </button>
     );
 
+  // Handle Logout Function
+
+  const handleLogOut = () => {
+    signOut(auth)
+      .then(() => {
+        router.push("/");
+        closeOnCurrent("/");
+      })
+      .catch((e) => {
+        toast.error(e.message);
+      });
+  };
+
   return (
     <div>
-      <div className="relative z-40 lg:hidden">
+      <div className="relative z-45 lg:hidden">
         <div className="fixed inset-0 bg-black bg-opacity-25" />
       </div>
 
-      <div className="fixed overflow-y-scroll overscroll-y-none inset-0 z-40 flex">
+      <div className="fixed overflow-y-scroll overscroll-y-none inset-0 z-45 flex">
         <div className="w-4/5">
           <div className="relative flex w-full max-w-sm flex-col overflow-y-auto bg-white pb-12 shadow-xl">
             {/* Close Button */}
@@ -67,43 +120,112 @@ const MobileNav = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+                className="relative -ml-4 -mt-2 inline-flex items-center justify-center rounded-md p-2 text-gray-450"
               >
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
 
-            {/* User Image */}
+            {/* User Image and Details */}
 
-            <div className="flex items-center ">
-              {user?.image ? (
-                <Image
-                  width={40}
-                  height={40}
-                  src={user?.image}
-                  alt="User Image"
-                  className="rounded-full"
-                />
+            <div>
+              {user ? (
+                <>
+                  <div className="flex items-center">
+                    <div>
+                      {user?.image ? (
+                        <Image
+                          width={50}
+                          height={50}
+                          src={user?.image}
+                          alt="User Image"
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <Image
+                          width={50}
+                          height={50}
+                          src={"/user.jpg"}
+                          alt="User Image"
+                          className="rounded-full"
+                        />
+                      )}
+                    </div>
+
+                    <div>
+                      {currentUsers.map((currentUser, i) => (
+                        <div key={i}>
+                          <p className="text-sm">
+                            {currentUser.name
+                              ? currentUser.name
+                              : "Unknown Name"}
+                          </p>
+                          <p className="text-[12px] text-gray-500">
+                            {currentUser.email}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="ml-6">
+                    <div className="flex items-center my-4 cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </div>
+                    <div className="flex items-center my-4 cursor-pointer">
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      <span>Billing</span>
+                    </div>
+                    <div className="flex items-center my-4 cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </div>
+                    <div className="flex items-center my-4 cursor-pointer">
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      <span>Invite users</span>
+                    </div>
+                    <div className="flex items-center my-4 cursor-pointer">
+                      <Plus className="mr-2 h-4 w-4" />
+                      <span>New Team</span>
+                    </div>
+                    <div
+                      onClick={handleLogOut}
+                      className="flex items-center my-4 cursor-pointer"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </div>
+                  </div>
+                </>
               ) : (
-                <Image
-                  width={40}
-                  height={40}
-                  src={"/user.jpg"}
-                  alt="User Image"
-                  className="rounded-full"
-                />
+                <div className="ml-6">
+                  <div
+                    onClick={() => closeOnCurrent("/sign-in")}
+                    className="flex items-center my-4 cursor-pointer"
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    <Link href={"sign-in"}>LogIn</Link>
+                  </div>
+                  <div
+                    onClick={() => closeOnCurrent("/sign-up")}
+                    className="flex items-center my-4 cursor-pointer"
+                  >
+                    <UserRoundPlus className="mr-2 h-4 w-4" />
+                    <Link href={"/sign-up"}>Create Account</Link>
+                  </div>
+                </div>
               )}
-              <p className="text-[18px] text-red-800"> adasof{user?.name}</p>
             </div>
 
             {/* Product fetch  */}
 
-            <div className="mt-2">
+            <div>
               <ul>
                 {PRODUCT_CATEGORIES.map((category) => (
                   <li
                     key={category.label}
-                    className="space-y-10 px-4 pb-8 pt-10"
+                    className="space-y-10 px-4 pb-8 pt-6"
                   >
                     <div className="border-b border-gray-200">
                       <div className="-mb-px flex">
@@ -138,46 +260,7 @@ const MobileNav = () => {
               </ul>
             </div>
 
-            {user ? (
-              <Button
-                onClick={handleLogOut}
-                variant="ghost"
-                className="font -m-2 flex items-center p-2 font-medium text-gray-900"
-              >
-                Log out <LogOutIcon size={15} className="ml-1" />
-              </Button>
-            ) : (
-              <div className=" border-t block border-gray-200 px-4 py-6">
-                <div
-                  className={`${buttonVariants({
-                    variant: "link",
-                  })} flow-root font`}
-                >
-                  <Link
-                    onClick={() => closeOnCurrent("/sign-in")}
-                    href="/sign-in"
-                    className="-m-2 block p-2 font-medium text-gray-900"
-                  >
-                    Sign in &rarr;
-                  </Link>
-                </div>
-                <div
-                  className={`${buttonVariants({
-                    variant: "link",
-                  })} flow-root font`}
-                >
-                  <Link
-                    onClick={() => closeOnCurrent("/sign-up")}
-                    href="/sign-up"
-                    className="-m-2 block p-2 font-medium text-gray-900"
-                  >
-                    Sign up &rarr;
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* TODO Update Mobile navbar */}
+            {/*TODO Change Product */}
           </div>
         </div>
       </div>
