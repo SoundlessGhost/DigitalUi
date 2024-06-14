@@ -10,6 +10,7 @@ import {
   LogOut,
   LogIn,
   UserRoundPlus,
+  Home,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,50 +20,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getAuth, signOut } from "@firebase/auth";
 import { app } from "../../firebase.config";
-
-const getUser = async () => {
-  try {
-    const res = await fetch("http://localhost:3000/api/users", {
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      throw new Error("Fetching error: " + res.statusText);
-    }
-    const FetchValue = await res.json();
-    return FetchValue;
-  } catch (error) {
-    console.error("Error fetching data:", error.message);
-    return [];
-  }
-};
+import dynamic from "next/dynamic";
 
 const MobileNav = () => {
-  const [currentUsers, setCurrentUsers] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const auth = getAuth(app);
   const [user] = useUser();
+  const auth = getAuth(app);
+
+  const pathname = usePathname();
   const router = useRouter();
-
-  // Filter user from database
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const FetchValue = await getUser();
-
-      // Ensure FetchValue is iterable (an array in this case)
-      if (Array.isArray(FetchValue)) {
-        const filteredUser = FetchValue.filter(
-          (FetchUser) => FetchUser?.email === user?.email
-        );
-        setCurrentUsers(filteredUser);
-      } else {
-        console.error("FetchValue is not an array or iterable", FetchValue);
-      }
-    };
-
-    fetchData();
-  }, [user]);
 
   // Window Close Or Open
 
@@ -120,7 +86,7 @@ const MobileNav = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="relative -ml-4 -mt-2 inline-flex items-center justify-center rounded-md p-2 text-gray-450"
+                className="relative text-black -ml-4 -mt-2 inline-flex items-center justify-center rounded-md p-2 text-gray-450"
               >
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>
@@ -131,15 +97,17 @@ const MobileNav = () => {
             <div>
               {user ? (
                 <>
-                  <div className="flex items-center">
+                  <div className="flex items-center text-black">
                     <div>
-                      {user?.image ? (
+                      {user?.photoURL ? (
                         <Image
                           width={50}
                           height={50}
-                          src={user?.image}
+                          src={user?.photoURL}
                           alt="User Image"
-                          className="rounded-full"
+                          className="rounded-full w-[45px] h-[45px] mx-1"
+                          placeholder="blur"
+                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
                         />
                       ) : (
                         <Image
@@ -148,27 +116,25 @@ const MobileNav = () => {
                           src={"/user.jpg"}
                           alt="User Image"
                           className="rounded-full"
+                          placeholder="blur"
+                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
                         />
                       )}
                     </div>
 
                     <div>
-                      {currentUsers.map((currentUser, i) => (
-                        <div key={i}>
-                          <p className="text-sm">
-                            {currentUser.name
-                              ? currentUser.name
-                              : "Unknown Name"}
-                          </p>
-                          <p className="text-[12px] text-gray-500">
-                            {currentUser.email}
-                          </p>
-                        </div>
-                      ))}
+                      <p className="text-sm">{user?.displayName}</p>
+                      <p className="text-[12px] text-gray-500">{user?.email}</p>
                     </div>
                   </div>
 
-                  <div className="ml-6">
+                  <div className="ml-6 text-black">
+                    <div className="my-4 cursor-pointer">
+                      <Link href={"/"} className="flex items-center ">
+                        <Home className="mr-2 h-4 w-4" />
+                        <span>Home</span>
+                      </Link>
+                    </div>
                     <div className="flex items-center my-4 cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
@@ -180,10 +146,6 @@ const MobileNav = () => {
                     <div className="flex items-center my-4 cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
-                    </div>
-                    <div className="flex items-center my-4 cursor-pointer">
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      <span>Invite users</span>
                     </div>
                     <div className="flex items-center my-4 cursor-pointer">
                       <Plus className="mr-2 h-4 w-4" />
@@ -199,7 +161,7 @@ const MobileNav = () => {
                   </div>
                 </>
               ) : (
-                <div className="ml-6">
+                <div className="ml-6 text-black">
                   <div
                     onClick={() => closeOnCurrent("/sign-in")}
                     className="flex items-center my-4 cursor-pointer"
@@ -244,6 +206,8 @@ const MobileNav = () => {
                               src={item.imageSrc}
                               alt="product category image"
                               className="object-cover object-center"
+                              placeholder="blur"
+                              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
                             />
                           </div>
                           <Link
@@ -268,4 +232,4 @@ const MobileNav = () => {
   );
 };
 
-export default MobileNav;
+export default dynamic(() => Promise.resolve(MobileNav), { ssr: false });

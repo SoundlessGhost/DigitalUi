@@ -11,6 +11,8 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "../../../../firebase.config";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import dynamic from "next/dynamic";
 
 const SignInPage = () => {
   const auth = getAuth(app);
@@ -22,17 +24,49 @@ const SignInPage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { email, password } = data;
-    signInWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        if (res?.user?.email) {
-          router.push("/");
+
+    try {
+      // Sign In With Firebase
+
+      const signInRes = await signInWithEmailAndPassword(auth, email, password);
+
+      if (signInRes?.user?.email) {
+        router.push("/");
+      }
+
+      // Create JWT Token
+
+      if (auth.currentUser && auth.currentUser.email) {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || "Failed to login");
+        } else {
+          const response = await res.json();
+          const token = response.token;
+          Cookies.set("token", token, {
+            expires: 1,
+            secure: true,
+            sameSite: "strict",
+          });
         }
-      })
-      .catch((e) => {
-        toast.error(e.message);
-      });
+      } else {
+        Cookies.remove("token");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error during login process:", error);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -46,6 +80,8 @@ const SignInPage = () => {
             width={40}
             height={40}
             alt="Picture of the eagle"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
           />
           <h1 className="text-2xl font-bold font ">Welcome Back</h1>
           <Link
@@ -70,8 +106,10 @@ const SignInPage = () => {
                 className="mt-2"
                 placeholder="You@example.com"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.email?.message}
+              <p className="font mt-1 text-[10px] text-red-600">
+                {errors.email?.type === "required" && (
+                  <span role="alert">email is required</span>
+                )}
               </p>
             </div>
 
@@ -100,4 +138,5 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default dynamic(() => Promise.resolve(SignInPage), { ssr: false });
+// TODO edit profile

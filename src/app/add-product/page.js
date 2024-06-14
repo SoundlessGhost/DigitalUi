@@ -3,6 +3,7 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import dynamic from "next/dynamic";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -15,7 +16,8 @@ const AddProductPage = () => {
 
   const onSubmit = (data) => {
     const {
-      product,
+      name,
+      sellerName,
       Brand,
       Color,
       Size,
@@ -27,7 +29,8 @@ const AddProductPage = () => {
 
     const ProductInfo = {
       email,
-      product,
+      sellerName,
+      name,
       Brand,
       Color,
       Size,
@@ -63,9 +66,18 @@ const AddProductPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="product">Name</Label>
+              <Label htmlFor="name">Your Name</Label>
               <Input
-                {...register("product", { required: true })}
+                {...register("sellerName", { required: true })}
+                className="mt-2"
+                placeholder="Your name"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="name">Product Name</Label>
+              <Input
+                {...register("name", { required: true })}
                 className="mt-2"
                 placeholder="Product name"
               />
@@ -132,4 +144,4 @@ const AddProductPage = () => {
   );
 };
 
-export default AddProductPage;
+export default dynamic(() => Promise.resolve(AddProductPage), { ssr: false });

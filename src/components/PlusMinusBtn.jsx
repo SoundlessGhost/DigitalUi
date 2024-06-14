@@ -1,22 +1,19 @@
-"use client";
 import { Minus, Plus } from "lucide-react";
-import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import React from "react";
 
-const PlusMinusBtn = () => {
-  const [increase, setIncrease] = useState(0);
-
+const PlusMinusBtn = ({ quantity, setQuantity }) => {
   return (
-    <div className="flex items-center ml-4">
+    <div className="flex items-center">
+      Quantity
       <Minus
-        onClick={() => setIncrease(increase - 1)}
+        onClick={() => setQuantity(quantity > 0 ? quantity - 1 : 0)}
         size={32}
-        className={`bg-gray-100 cursor-pointer rounded-md p-2 ${
-          increase === 0 ? "hidden" : null
-        }`}
+        className={`bg-gray-100 cursor-pointer rounded-md p-2 ml-4`}
       />
-      <p className="mx-4">{increase}</p>
+      <p className="mx-4">{quantity}</p>
       <Plus
-        onClick={() => setIncrease(increase + 1)}
+        onClick={() => setQuantity(quantity + 1)}
         size={32}
         className="bg-gray-100 cursor-pointer rounded-md p-2"
       />
@@ -24,4 +21,4 @@ const PlusMinusBtn = () => {
   );
 };
 
-export default PlusMinusBtn;
+export default dynamic(() => Promise.resolve(PlusMinusBtn), { ssr: false });

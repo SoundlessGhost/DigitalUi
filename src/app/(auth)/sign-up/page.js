@@ -8,10 +8,15 @@ import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { app } from "../../../../firebase.config";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const SignUpPage = () => {
   const auth = getAuth(app);
@@ -23,29 +28,47 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    const { name, email, password } = data;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        const userInfo = {
-          name,
-          email,
-          password,
-        };
-        fetch("http://localhost:3000/api/users", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userInfo),
-        }).then((res) => res.json());
-        if (res?.user?.email) {
-          router.push("/");
-        }
-      })
-      .catch((e) => {
-        toast.error(e.message);
+  const onSubmit = async (data) => {
+    const { img, name, email, password } = data;
+
+    try {
+      // Sign In With Firebase
+
+      await createUserWithEmailAndPassword(auth, email, password);
+
+      // Update Name And Photo with Firebase
+
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+        photoURL: img,
       });
+
+      const userInformation = {
+        name,
+        email,
+        password,
+      };
+
+      // After Created User, Data Save to MongoDB
+
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userInformation),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to Create User");
+      } else {
+        await res.json();
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error during user creation:", error);
+      toast.error(error.message || "Failed to Create User");
+    }
   };
 
   return (
@@ -59,6 +82,8 @@ const SignUpPage = () => {
             width={40}
             height={40}
             alt="Picture of the eagle"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
           />
           <h1 className="text-2xl font-bold font ">Create your account</h1>
           <Link
@@ -83,8 +108,10 @@ const SignUpPage = () => {
                 className="mt-2"
                 placeholder="Your Name"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.name?.message}
+              <p className="font mt-1 text-[10px] text-red-600">
+                {errors.name?.type === "required" && (
+                  <span role="alert">name is required</span>
+                )}
               </p>
             </div>
 
@@ -95,8 +122,12 @@ const SignUpPage = () => {
                 className="mt-2"
                 placeholder="You@example.com"
               />
-              <p className="font text-[12px] mt-2 text-red-600">
-                {errors.email?.message}
+              <p className="font mt-1 text-[10px] text-red-600">
+                {errors.email?.type === "required" && (
+                  <span role="alert">
+                    email is required | you can not leave empty
+                  </span>
+                )}
               </p>
             </div>
 
@@ -117,6 +148,22 @@ const SignUpPage = () => {
                 {errors.password?.message}
               </p>
             </div>
+
+            <div className="mt-4">
+              <Label htmlFor="img">Your Images Url</Label>
+              <Input
+                {...register("img", { required: true })}
+                className="mt-2"
+                placeholder="images url"
+              />
+              <p className="font mt-1 text-[10px] text-red-600">
+                {errors.img?.type === "required" && (
+                  <span role="alert">
+                    please provide your profile image url
+                  </span>
+                )}
+              </p>
+            </div>
             <Button className="w-full mt-6 font">Sign up</Button>
           </form>
         </div>
@@ -125,4 +172,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default dynamic(() => Promise.resolve(SignUpPage), { ssr: false });

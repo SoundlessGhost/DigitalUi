@@ -1,5 +1,5 @@
 import ConnectDB from "@/lib/ConnectDB";
-import { Product } from "@/models/Product";
+import { Product } from "@/models/Product.model";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -20,10 +20,11 @@ export async function POST(request) {
   try {
     await ConnectDB();
     const body = await request.json();
-    
-    const createProduct = Product.create(body);
-    return NextResponse.json(createProduct, { status: 200 });
+
+    const createProduct = await Product.create(body);
+    return NextResponse.json(createProduct, { status: 201 });
   } catch (error) {
+    console.error("Error creating product:", error);
     return NextResponse.json(
       { message: "Something Went Wrong Failed to Created Product" },
       { status: 500 }

@@ -1,20 +1,23 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import PlusMinusBtn from "@/components/PlusMinusBtn";
-import { Button, buttonVariants } from "@/components/ui/button";
+import ParentComponentBuyAndQuantity from "@/components/ParentComponentBuyAndQuantity";
+import { buttonVariants } from "@/components/ui/button";
 import {
+  BadgeCheck,
   ChevronRight,
   Coins,
   PackageCheck,
   RefreshCcw,
+  ShieldCheck,
   ShieldOff,
   SignalHigh,
   Star,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 
 const SingleProductPage = async ({ params }) => {
-  const res = await fetch(`http://localhost:3000/api/products/${params.id}`, {
+  const res = await fetch(`http://localhost:3000/api/products/${params?.id}`, {
     cache: "no-store",
   });
   if (!res.ok) {
@@ -26,7 +29,7 @@ const SingleProductPage = async ({ params }) => {
     <div className="font1 bg-white overflow-hidden">
       {/* Links One */}
 
-      <div className="flex items-center mx-10 border-0 border-b w-96 ">
+      <div className="flex items-center px-10 py-2 border-0 border-b bg-gray-100 rounded-md">
         <Link
           href={"/"}
           className={`${buttonVariants({
@@ -42,7 +45,7 @@ const SingleProductPage = async ({ params }) => {
             variant: "link",
           })}
         >
-          {product.product}
+          {product.name}
         </Link>
       </div>
 
@@ -50,61 +53,70 @@ const SingleProductPage = async ({ params }) => {
         <div className="my-10 lg:flex block lg:border-0 lg:border-b lg:pb-10">
           {/* First One */}
 
-          <div>
+          <div className="bg-gray-50 p-4 rounded-md">
             <Image
               src={product.images[1]}
               width={200}
               height={200}
               className="w-[330px] h-[330px] rounded-lg border border-gray-200"
               alt="Picture of the product"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
             />
           </div>
 
           {/* Middle One */}
 
-          <div className="lg:ml-10 lg:mt-0 mt-10 w-[330px] ">
+          <div className="lg:ml-4 lg:mt-0 mt-10 w-[350px] bg-gray-50 p-4 rounded-md">
             <div>
-              <p className="text-2xl">{product.product}</p>
+              <p className="text-2xl">{product.name}</p>
               <p className="flex items-center">
                 <span className="mr-1 text-[12px] my-1 text-gray-500">
                   Ratting:{" "}
                 </span>
                 <Star size={12} />
               </p>
+              <p className="text-[12px] my-1 text-gray-500">
+                Size: {product.Size}
+              </p>
             </div>
 
             <div className="flex items-center text-[12px] -mt-2 border-0 border-b">
               <p className=" text-gray-500">Brand: </p>
-              <Link
-                href={"/"}
-                className={`${buttonVariants({
-                  variant: "link",
-                })} -ml-2 font-size text-[#47bba6]`}
-              >
-                {product.Brand}
+              <div>
+                {product.Brand === "No Brand" ? (
+                  <Link
+                    href={"/"}
+                    className={`${buttonVariants({
+                      variant: "link",
+                    })} -ml-3 text-[10px]`}
+                  >
+                    No Brand | More products from No Brand
+                  </Link>
+                ) : (
+                  <Link
+                    href={"/"}
+                    className={`${buttonVariants({
+                      variant: "link",
+                    })} -ml-3 text-[10px]`}
+                  >
+                    {product.Brand}
+                  </Link>
+                )}
+
                 {/* | TODO - Brand product eikhane asbe  */}
-              </Link>
+              </div>
             </div>
 
-            <div className="mt-4">
-              <p className="text-2xl text-blue-500">{product.price} $</p>
-              <div className="mt-2 flex items-center ">
-                Quantity
-                <PlusMinusBtn />
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                <Link href={"/checkout"} className={`${buttonVariants()}`}>
-                  Buy Now
-                </Link>
-                <Button variant="ghost">Add to Cart</Button>
-              </div>
-            </div>
+            {/* Quantity and Buy Button */}
+
+            <ParentComponentBuyAndQuantity products={product} />
           </div>
 
           {/* Last One */}
 
-          <div className="lg:ml-10 lg:mt-0 mt-10 w-[330px] ">
-            <div className="">
+          <div className="lg:ml-4 lg:mt-0 mt-10 w-[350px] bg-gray-50 p-4 rounded-md">
+            <div>
               <p className="text-sm">Delivery</p>
               <div className="flex  my-2 items-center pl-4">
                 <PackageCheck size={15} />
@@ -141,6 +153,17 @@ const SingleProductPage = async ({ params }) => {
                 </p>
               </div>
             </div>
+
+            <div className="mt-4">
+              <p className="text-sm">Sold by</p>
+              <div className="flex  my-2 items-center pl-4">
+                {product?.sellerName}
+              </div>
+              <div className="flex items-center pl-4 text-orange-500">
+                <ShieldCheck size={25} />
+                <p className="text-[18px] ml-1 font-bold">Verified Seller</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -155,4 +178,6 @@ const SingleProductPage = async ({ params }) => {
   );
 };
 
-export default SingleProductPage;
+export default dynamic(() => Promise.resolve(SingleProductPage), {
+  ssr: false,
+});

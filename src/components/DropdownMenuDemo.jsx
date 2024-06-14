@@ -29,6 +29,7 @@ import useUser from "@/hooks/useUser";
 import { app } from "../../firebase.config";
 import { useRouter } from "next/navigation";
 import { getAuth, signOut } from "firebase/auth";
+import Link from "next/link";
 
 export function DropdownMenuDemo() {
   const auth = getAuth(app);
@@ -37,7 +38,7 @@ export function DropdownMenuDemo() {
 
   const handleLogOut = () => {
     signOut(auth).then(() => {
-      router.push("/");
+      router.push("/sign-up");
     });
   };
   return (
@@ -51,6 +52,8 @@ export function DropdownMenuDemo() {
               src={user?.image}
               alt="User Image"
               className="cursor-pointer rounded-full"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
             />
           ) : (
             <Image
@@ -59,6 +62,8 @@ export function DropdownMenuDemo() {
               src={"/user.jpg"}
               alt="User Image"
               className="cursor-pointer rounded-full"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
             />
           )}
         </DropdownMenuTrigger>
@@ -66,11 +71,13 @@ export function DropdownMenuDemo() {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <Link href={"/user-dashboard"}>
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <span>Billing</span>

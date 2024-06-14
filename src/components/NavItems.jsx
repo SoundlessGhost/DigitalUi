@@ -1,23 +1,24 @@
-"use client"
-import { PRODUCT_CATEGORIES } from '@/config';
-import React, { useEffect, useRef, useState } from 'react';
-import NavItem from './NavItem';
-import useOnClickOutside from '@/hooks/use-on-click-outside';
+"use client";
+import { PRODUCT_CATEGORIES } from "@/config";
+import React, { useEffect, useRef, useState } from "react";
+import NavItem from "./NavItem";
+import useOnClickOutside from "@/hooks/use-on-click-outside";
+import dynamic from "next/dynamic";
 
 const NavItems = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setActiveIndex(null);
       }
     };
 
-    document.addEventListener('keydown', handler);
+    document.addEventListener("keydown", handler);
 
     return () => {
-      document.removeEventListener('keydown', handler);
+      document.removeEventListener("keydown", handler);
     };
   }, []);
 
@@ -28,7 +29,7 @@ const NavItems = () => {
   useOnClickOutside(navRef, () => setActiveIndex(null));
 
   return (
-    <div className='flex gap-4 h-full' ref={navRef}>
+    <div className="flex gap-4 h-full" ref={navRef}>
       {PRODUCT_CATEGORIES.map((category, i) => {
         const handleOpen = () => {
           if (activeIndex === i) {
@@ -57,4 +58,4 @@ const NavItems = () => {
   );
 };
 
-export default NavItems;
+export default dynamic(() => Promise.resolve(NavItems), { ssr: false });
