@@ -38,7 +38,7 @@ const AddProductPage = () => {
       images: [productImg, productImg1],
     };
 
-    fetch("http://localhost:3000/api/products", {
+    fetch("https://digital-ui-nu.vercel.app/api/products", {
       method: "POST",
       headers: {
         "content-type": "application/json",

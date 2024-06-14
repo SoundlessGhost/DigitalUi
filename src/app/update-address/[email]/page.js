@@ -38,7 +38,7 @@ const UpdateAddressPage = ({ params }) => {
       city,
       area,
     };
-    fetch(`http://localhost:3000/api/user-address/${params.email}`, {
+    fetch(`https://digital-ui-nu.vercel.app/api/user-address/${params.email}`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",

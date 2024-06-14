@@ -41,7 +41,7 @@ const AddressPage = () => {
       area,
       email: user?.email,
     };
-    fetch("http://localhost:3000/api/user-address", {
+    fetch("https://digital-ui-nu.vercel.app/api/user-address", {
       method: "POST",
       headers: {
         "content-type": "application/json",

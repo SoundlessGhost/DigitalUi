@@ -17,7 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const SingleProductPage = async ({ params }) => {
-  const res = await fetch(`http://localhost:3000/api/products/${params?.id}`, {
+  const res = await fetch(`https://digital-ui-nu.vercel.app/api/products/${params?.id}`, {
     cache: "no-store",
   });
   if (!res.ok) {
