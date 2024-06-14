@@ -36,36 +36,28 @@ export function DropdownMenuDemo() {
   const { user } = useUser();
   const router = useRouter();
 
+  console.log("User Photo URL:", user?.photoURL);
+
+
   const handleLogOut = () => {
     signOut(auth).then(() => {
       router.push("/sign-up");
     });
   };
+
+  const userImage = user?.photoURL || "/user.jpg"; // Add a default image path here
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          {user?.image ? (
-            <Image
-              width={40}
-              height={40}
-              src={user?.image}
-              alt="User Image"
-              className="cursor-pointer rounded-full"
-              placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
-            />
-          ) : (
-            <Image
-              width={40}
-              height={40}
-              src={"/user.jpg"}
-              alt="User Image"
-              className="cursor-pointer rounded-full"
-              placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
-            />
-          )}
+          <Image
+            width={100}
+            height={100}
+            src={userImage}
+            alt="User Image"
+            className="rounded-full w-[40px] h-[40px] mx-1"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>

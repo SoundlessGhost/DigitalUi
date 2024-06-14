@@ -39,7 +39,7 @@ const HandleAddToCartBtn = ({ products, quantity }) => {
     };
 
     try {
-      const response = await fetch("https://digital-ui-nu.vercel.app/api/carts", {
+      const response = await fetch("/api/carts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

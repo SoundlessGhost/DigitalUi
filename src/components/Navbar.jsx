@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 
 const Navbar = () => {
   const [user] = useUser();
+  console.log(user);
 
   return (
     <div className="bg-orange-600 text-white sticky z-50 py-4 font-semibold top-0 inset-x-0">

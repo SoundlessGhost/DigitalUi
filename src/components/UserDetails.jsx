@@ -1,6 +1,5 @@
 "use client";
 import useUser from "@/hooks/useUser";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import dynamic from "next/dynamic";
@@ -69,17 +68,20 @@ const UserDetails = () => {
                 ))}
               </div>
             ) : (
-              <div className="px-10 py-4 mt-4  cursor-pointer bg-white shadow-md rounded-lg ">
-                <Link href={"/add-your-address"} className="flex items-center">
-                  <Plus size={20} /> <p className="ml-2"> add your address</p>
-                </Link>
-              </div>
+              <Link
+                href={"/add-your-address"}
+                className={`${buttonVariants({
+                  variant: "link",
+                })}`}
+              >
+                <p> add your address</p>
+              </Link>
             )}
           </div>
         </div>
       </div>
 
-      <div className="px-10 py-4 mt-4  cursor-pointer bg-white shadow-md rounded-lg mb-4">
+      <div className="px-10 py-4 mt-4  cursor-pointer bg-white shadow-md rounded-lg mb-4 border">
         <p className="ml-2"> Recent Orders</p>
         {/* TODO Recent Orders */}
       </div>

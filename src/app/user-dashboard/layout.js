@@ -19,8 +19,10 @@ export default function RootLayout({ children }) {
         className={cn("relative h-full font-sans antialiased", inter.className)}
       >
         <Navbar />
-        <ManageMyAccountPage />
-        {children}
+        <div className="flex">
+          <ManageMyAccountPage />
+          {children}
+        </div>
         <Footer />
       </body>
     </html>

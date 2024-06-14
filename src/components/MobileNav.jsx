@@ -106,8 +106,6 @@ const MobileNav = () => {
                           src={user?.photoURL}
                           alt="User Image"
                           className="rounded-full w-[45px] h-[45px] mx-1"
-                          placeholder="blur"
-                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
                         />
                       ) : (
                         <Image
@@ -116,8 +114,6 @@ const MobileNav = () => {
                           src={"/user.jpg"}
                           alt="User Image"
                           className="rounded-full"
-                          placeholder="blur"
-                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA"
                         />
                       )}
                     </div>
